@@ -9,3 +9,9 @@ npm install
 npm run build
 npm start
 ```
+
+## Running the server in docker
+
+```properties
+docker-compose up -d
+```

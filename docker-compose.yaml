@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  api:
+    image: thumbnail-api
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/usr/src/app/src
