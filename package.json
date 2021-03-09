@@ -2,11 +2,11 @@
   "name": "thumbnail-generator",
   "version": "1.0.0",
   "description": "Thumbnail-generator is a JSON-based REST API service which resizes images into 100x100px thumbnails.",
-  "main": "src/server.ts",
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc -p .",
-    "start": "node dist/server.js",
-    "dev": "nodemon dist/server.js",
+    "start": "node dist/index.js",
+    "dev": "nodemon dist/index.js",
     "lint": "eslint src --ext .ts",
     "lint:fix": "npm run lint:eslint:fix && npm run lint:prettier:fix",
     "lint:eslint": "eslint src --ext .ts",
@@ -18,6 +18,7 @@
   "license": "MIT",
   "repository": {},
   "dependencies": {
+    "agenda": "^4.1.0",
     "express": "^4.17.1"
   },
   "devDependencies": {

@@ -7,3 +7,19 @@ services:
       - "3000:3000"
     volumes:
       - ./src:/usr/src/app/src
+    environment: 
+      SERVER_TYPE: server
+  task:
+    image: thumbnail-task
+    build: .
+    volumes:
+      - ./src:/usr/src/app/src
+    environment: 
+      SERVER_TYPE: worker
+  db:
+    image : mongo
+    volumes:
+      - ./data/database:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
