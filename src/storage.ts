@@ -35,11 +35,25 @@ const putFile = async (fileName: string, buffer: Buffer): Promise<boolean> => {
   }
 };
 
+const streamToBuffer = (stream: NodeJS.ReadableStream): Promise<Buffer> => {
+  const chunks = [];
+  return new Promise((resolve, reject) => {
+    stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+    stream.on('error', (err) => reject(err));
+    stream.on('end', () => resolve(Buffer.concat(chunks)));
+  });
+};
+
 const getFile = async (
-  fileName: string
-): Promise<NodeJS.ReadableStream | null> => {
+  fileName: string,
+  asBuffer = true
+): Promise<Buffer | NodeJS.ReadableStream | null> => {
   try {
-    return await storage.getObject(BUCKET_NAME, fileName);
+    const fileStream = await storage.getObject(BUCKET_NAME, fileName);
+    if (asBuffer) {
+      return await streamToBuffer(fileStream);
+    }
+    return fileStream;
   } catch (error) {
     console.error('Get file failed: ', error);
     return null;

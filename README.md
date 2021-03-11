@@ -18,3 +18,7 @@ docker-compose up -d
 - Should use AWS's official library instead of minio for better support and developer familiarity
 - Use S3 instead of a self hosted solution in production
 - UUID's are very unlikely to have duplicates, but be safe by adding a check before saving files.
+
+### Resizing
+- Investigate better cropping/stretching methods instead of using fill (which will not preserve aspect ratio)
+- Investigate best practices for handling streams vs buffers depending on use case
