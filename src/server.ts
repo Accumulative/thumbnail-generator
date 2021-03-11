@@ -2,7 +2,8 @@ import express from 'express';
 import { Application, Request, Response } from 'express';
 import {
   createResizeImageJob,
-  getResizeImageJob
+  getResizeImageJob,
+  getResizeImageJobDownload
 } from './controllers/thumbnail';
 import multer from 'multer';
 import { PostFileRequest } from './types';
@@ -37,5 +38,6 @@ const upload = multer({
 // Thumbnail resize controller
 app.post('/thumbnail', upload, createResizeImageJob);
 app.get('/thumbnail/:id', getResizeImageJob);
+app.get('/thumbnail/:id/image', getResizeImageJobDownload);
 
 app.listen(port, () => console.log(`Server is listening on port ${port}`));

@@ -1,9 +1,13 @@
 import { Request, Response } from 'express';
 import { agenda, TASK_TYPES } from '../worker';
+import { putFile, getFileLink, getFile } from '../storage';
 import { getDatabase } from '../database';
-import { putFile } from '../storage';
 import { v4 as uuidv4 } from 'uuid';
-import type { PostFileRequest } from '../types';
+import type {
+  ThumbnailJobData,
+  GetThumbnailJobResponse,
+  PostFileRequest
+} from '../types';
 
 const createResizeImageJob = async (
   req: PostFileRequest,
@@ -13,6 +17,7 @@ const createResizeImageJob = async (
     res.status(400).send({ error: req.fileValidationError });
     return;
   }
+
   try {
     const uuid = uuidv4();
     const extension = req.file.originalname.split('.').pop();
@@ -43,14 +48,37 @@ const getResizeImageJob = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const job = await getDatabase()
+  const job: ThumbnailJobData | null = await getDatabase()
     .collection('thumbnailJob')
     .findOne({ _id: req.params.id });
   if (job) {
-    res.status(200).send({ data: job });
+    const responseData: GetThumbnailJobResponse = { ...job, thumbnailLink: '' };
+    if (job.status === 'complete') {
+      responseData.thumbnailLink = await getFileLink(job.thumbnailFilename);
+    }
+    res.status(200).send({ data: responseData });
   } else {
     res.status(400).send({ error: 'Job not found' });
   }
 };
 
-export { createResizeImageJob, getResizeImageJob };
+const getResizeImageJobDownload = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const job: ThumbnailJobData | null = await getDatabase()
+    .collection('thumbnailJob')
+    .findOne({ _id: req.params.id });
+  if (job) {
+    const thumbnailStream = await getFile(job.thumbnailFilename, false);
+    if (thumbnailStream) {
+      (thumbnailStream as NodeJS.ReadableStream).pipe(res);
+    } else {
+      res.status(400).send({ error: 'Image not found' });
+    }
+  } else {
+    res.status(400).send({ error: 'Job not found' });
+  }
+};
+
+export { createResizeImageJob, getResizeImageJob, getResizeImageJobDownload };

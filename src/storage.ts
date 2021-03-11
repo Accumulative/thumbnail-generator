@@ -60,4 +60,8 @@ const getFile = async (
   }
 };
 
-export { initStorage, putFile, getFile };
+const getFileLink = async (filename: string): Promise<string> => {
+  return storage.presignedGetObject(BUCKET_NAME, filename);
+};
+
+export { initStorage, putFile, getFile, getFileLink };

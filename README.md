@@ -22,3 +22,8 @@ docker-compose up -d
 ### Resizing
 - Investigate better cropping/stretching methods instead of using fill (which will not preserve aspect ratio)
 - Investigate best practices for handling streams vs buffers depending on use case
+
+### Fetching the result
+- Presigned URL's currently expire after 7 days (default). Tie to user authentication? Unlimited number of downloads? 
+- Connect to cloudfront as a CDN for better performance
+- Set up a proxy so that users dont have to set s3 vhost for minio presigned urls to work
