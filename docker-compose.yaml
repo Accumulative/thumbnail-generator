@@ -29,3 +29,11 @@ services:
     ports:
       - 27017:27017
     restart: unless-stopped
+  s3:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./data/minio:/data
+    env_file: local.env
+    command: server /data

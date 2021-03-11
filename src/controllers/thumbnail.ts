@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { agenda, TASK_TYPES } from '../worker';
 import { getDatabase } from '../database';
+import { putFile } from '../storage';
 import { v4 as uuidv4 } from 'uuid';
 import type { PostFileRequest } from '../types';
 
@@ -16,20 +17,22 @@ const createResizeImageJob = async (
     const uuid = uuidv4();
     const extension = req.file.originalname.split('.').pop();
     const filename = `${uuid}.${extension}`;
+    const fileResult = putFile(filename, req.file.buffer);
+    if (fileResult) {
+      const thumbnailJob = {
+        _id: uuid,
+        filename,
+        originalFilename: req.file.originalname,
+        status: 'waiting',
+        thumbnailFilename: ''
+      };
 
-    // TODO: save file to storage
-
-    const thumbnailJob = {
-      _id: uuid,
-      filename,
-      originalFilename: req.file.originalname,
-      status: 'waiting',
-      thumbnailFilename: ''
-    };
-
-    getDatabase().collection('thumbnailJob').insertOne(thumbnailJob);
-    await agenda.now(TASK_TYPES.RESIZE_IMAGE, thumbnailJob);
-    res.status(200).send({ data: { job_id: uuid } });
+      getDatabase().collection('thumbnailJob').insertOne(thumbnailJob);
+      await agenda.now(TASK_TYPES.RESIZE_IMAGE, thumbnailJob);
+      res.status(200).send({ data: { job_id: uuid } });
+    } else {
+      res.status(400).send({ error: 'Error occurred' });
+    }
   } catch (error) {
     console.error('Create resize job failed: ', error);
     res.status(400).send({ error: 'Error occurred' });
