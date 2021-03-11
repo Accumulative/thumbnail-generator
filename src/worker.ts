@@ -1,11 +1,13 @@
-import * as Agenda from 'agenda';
+import Agenda from 'agenda';
 import { resizeImage } from './jobs/thumbnail';
-
-const mongoConnectionString = 'mongodb://db/thumbnailDB';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const agenda = new (Agenda as any)({
-  db: { address: mongoConnectionString, collection: 'agenda', options: {} }
+  db: {
+    address: `${process.env.DB_CONNECTION_STRING}/thumbnailDB`,
+    collection: 'agenda',
+    options: {}
+  }
 });
 
 const TASK_TYPES = {

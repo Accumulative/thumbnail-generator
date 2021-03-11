@@ -1,7 +1,21 @@
-class Job {
+interface Job {
   attrs: {
     data: unknown;
   };
 }
 
-export type { Job };
+interface ThumbnailJobData {
+  _id: string;
+  filename: string;
+  originalFilename: string;
+  status: string;
+  thumbnailFilename: string;
+}
+
+interface ThumbnailJob extends Job {
+  attrs: {
+    data: ThumbnailJobData;
+  };
+}
+
+export type { Job, ThumbnailJob, ThumbnailJobData };

@@ -9,6 +9,9 @@ services:
       - ./src:/usr/src/app/src
     environment: 
       SERVER_TYPE: server
+    env_file: local.env
+    depends_on: 
+      - db
   task:
     image: thumbnail-task
     build: .
@@ -16,6 +19,9 @@ services:
       - ./src:/usr/src/app/src
     environment: 
       SERVER_TYPE: worker
+    env_file: local.env
+    depends_on: 
+      - db
   db:
     image : mongo
     volumes:
