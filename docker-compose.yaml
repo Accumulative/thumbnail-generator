@@ -12,6 +12,7 @@ services:
     env_file: local.env
     depends_on: 
       - db
+      - s3
   task:
     image: thumbnail-task
     build: .
@@ -22,6 +23,7 @@ services:
     env_file: local.env
     depends_on: 
       - db
+      - s3
   db:
     image : mongo
     volumes:

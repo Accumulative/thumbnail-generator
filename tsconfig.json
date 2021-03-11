@@ -3,6 +3,6 @@
     "outDir": "dist",
     "baseUrl": "",
     "module": "commonjs",
-    "esModuleInterop": true
+    "esModuleInterop": true,
   }
 }

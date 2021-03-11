@@ -13,6 +13,11 @@ const createResizeImageJob = async (
   req: PostFileRequest,
   res: Response
 ): Promise<void> => {
+  if (!req.file) {
+    res.status(400).send({ error: 'Please supply an image' });
+    return;
+  }
+
   if (req.fileValidationError) {
     res.status(400).send({ error: req.fileValidationError });
     return;
