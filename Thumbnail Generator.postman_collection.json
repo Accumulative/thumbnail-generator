@@ -1,0 +1,98 @@
+{
+	"info": {
+		"_postman_id": "87d528a6-cf93-4b5c-af7d-e39345bb769c",
+		"name": "Thumbnail Generator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3000/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/thumbnail",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/thumbnail",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"thumbnail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/thumbnail/:id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/thumbnail/c7b4319e-b8f6-4ab0-8fb7-5b51db5c0c36",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"thumbnail",
+						"c7b4319e-b8f6-4ab0-8fb7-5b51db5c0c36"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/thumbnail/:id/image",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/thumbnail/98cd5e27-bc55-48c7-aff0-bd979cf1b291/image",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"thumbnail",
+						"98cd5e27-bc55-48c7-aff0-bd979cf1b291",
+						"image"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
