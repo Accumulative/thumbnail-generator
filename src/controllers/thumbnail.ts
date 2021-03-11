@@ -9,6 +9,7 @@ import type {
   PostFileRequest
 } from '../types';
 
+// POST /thumbnail
 const createResizeImageJob = async (
   req: PostFileRequest,
   res: Response
@@ -36,9 +37,11 @@ const createResizeImageJob = async (
         status: 'waiting',
         thumbnailFilename: ''
       };
-
+      // create a record in the database so the user can get updates
       getDatabase().collection('thumbnailJob').insertOne(thumbnailJob);
+      // create a job for the worker to pickup, scheduled from now
       await agenda.now(TASK_TYPES.RESIZE_IMAGE, thumbnailJob);
+      // include job_id in response which can be used to retrieve the result thumbnail
       res.status(200).send({ data: { job_id: uuid } });
     } else {
       res.status(400).send({ error: 'Error occurred' });
@@ -49,6 +52,7 @@ const createResizeImageJob = async (
   }
 };
 
+// GET /thumbnail/:id
 const getResizeImageJob = async (
   req: Request,
   res: Response
@@ -58,6 +62,8 @@ const getResizeImageJob = async (
     .findOne({ _id: req.params.id });
   if (job) {
     const responseData: GetThumbnailJobResponse = { ...job, thumbnailLink: '' };
+
+    // include a presigned url to the thumbnail if the resize job has completed
     if (job.status === 'complete') {
       responseData.thumbnailLink = await getFileLink(job.thumbnailFilename);
     }
@@ -67,6 +73,7 @@ const getResizeImageJob = async (
   }
 };
 
+// GET /thumbnail/:id/image
 const getResizeImageJobDownload = async (
   req: Request,
   res: Response
@@ -75,6 +82,7 @@ const getResizeImageJobDownload = async (
     .collection('thumbnailJob')
     .findOne({ _id: req.params.id });
   if (job) {
+    // send the image directly for convenience
     const thumbnailStream = await getFile(job.thumbnailFilename, false);
     if (thumbnailStream) {
       (thumbnailStream as NodeJS.ReadableStream).pipe(res);

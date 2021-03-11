@@ -58,6 +58,9 @@ docker exec -it {api container id} npm run test
 ### For development
 You can run `npm run test:watch` for an instant feedback loop
 
+### Notes
+- `src/test/images` are images used as inputs for the unit tests and testing
+- `src/test/images_temp` is a directory used by the unit tests
 
 ---
 ## REST API
@@ -75,9 +78,10 @@ curl --location --request POST 'http://localhost:3000/thumbnail' \
 --form 'file=@"/path/to/image.png"'
 ```
 
-### Get result thumbnail as presigned url
+### Get job status and result thumbnail as presigned url
 `GET http://localhost:3000/thumbnail/:id`
 
+- Gets the current status of the task, and if complete returns as presigned url
 - The presigned url only works if you set a vhost for `s3` to `127.0.0.1` in `/etc/hosts`
 - Use `job_id` from the previous POST API as the `id` url parameter
 

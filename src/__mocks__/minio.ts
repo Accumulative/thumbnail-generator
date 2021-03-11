@@ -1,5 +1,7 @@
 import fs from 'fs';
 
+// Use disk storage instead of minio for unit tests
+
 export const getObjectMock = jest.fn(async (_, name) =>
   Promise.resolve(fs.createReadStream(`src/test/images_temp/${name}`))
 );

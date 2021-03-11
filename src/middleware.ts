@@ -5,6 +5,7 @@ import { PostFileRequest } from './types';
 const fileMiddleware = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req: PostFileRequest, file, cb) => {
+    // basic file validation
     if (
       file.mimetype == 'image/png' ||
       file.mimetype == 'image/jpg' ||

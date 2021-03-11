@@ -10,6 +10,7 @@ const storage = new minio.Client({
 
 const BUCKET_NAME = 'thumbnails';
 
+// make sure the bucket exists before starting the server
 const initStorage = async (): Promise<boolean> => {
   try {
     const alreadyExists = await storage.bucketExists(BUCKET_NAME);
@@ -25,6 +26,7 @@ const initStorage = async (): Promise<boolean> => {
   }
 };
 
+// create a file in minio, using a buffer
 const putFile = async (fileName: string, buffer: Buffer): Promise<boolean> => {
   try {
     await storage.putObject(BUCKET_NAME, fileName, buffer);
@@ -35,6 +37,7 @@ const putFile = async (fileName: string, buffer: Buffer): Promise<boolean> => {
   }
 };
 
+// converts a stream to a buffer
 const streamToBuffer = (stream: NodeJS.ReadableStream): Promise<Buffer> => {
   const chunks = [];
   return new Promise((resolve, reject) => {
@@ -44,6 +47,7 @@ const streamToBuffer = (stream: NodeJS.ReadableStream): Promise<Buffer> => {
   });
 };
 
+// get a file from minio by name, as a buffer or stream
 const getFile = async (
   fileName: string,
   asBuffer = true
@@ -60,6 +64,7 @@ const getFile = async (
   }
 };
 
+// generate a presigned link for getting a file
 const getFileLink = async (filename: string): Promise<string> => {
   return storage.presignedGetObject(BUCKET_NAME, filename);
 };

@@ -21,8 +21,12 @@
   "jest": {
     "preset": "./src/test/presets.js",
     "verbose": true,
-    "modulePathIgnorePatterns": ["dist"],
-    "setupFilesAfterEnv": ["./src/test/setupTests.ts"]
+    "modulePathIgnorePatterns": [
+      "dist"
+    ],
+    "setupFilesAfterEnv": [
+      "./src/test/setupTests.ts"
+    ]
   },
   "repository": {},
   "dependencies": {
