@@ -15,3 +15,9 @@ npm start
 ```properties
 docker-compose up -d
 ```
+
+## Notes for future
+### Image upload
+- Does validation cover all cases? File size 20mb, jpg, jpeg and png allowed.
+- Consider base64 input vs file
+- Should there be validation on file size or pixel dimensions?

@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 interface Job {
   attrs: {
     data: unknown;
@@ -18,4 +20,8 @@ interface ThumbnailJob extends Job {
   };
 }
 
-export type { Job, ThumbnailJob, ThumbnailJobData };
+interface PostFileRequest extends Request {
+  fileValidationError?: string;
+}
+
+export type { Job, ThumbnailJob, ThumbnailJobData, PostFileRequest };

@@ -2,16 +2,19 @@ import { Request, Response } from 'express';
 import { agenda, TASK_TYPES } from '../worker';
 import { getDatabase } from '../database';
 import { v4 as uuidv4 } from 'uuid';
+import type { PostFileRequest } from '../types';
 
 const createResizeImageJob = async (
-  _: Request,
+  req: PostFileRequest,
   res: Response
 ): Promise<void> => {
-  // TODO: file validaton
-
+  if (req.fileValidationError) {
+    res.status(400).send({ error: req.fileValidationError });
+    return;
+  }
   try {
     const uuid = uuidv4();
-    const extension = 'test.png'.split('.').pop();
+    const extension = req.file.originalname.split('.').pop();
     const filename = `${uuid}.${extension}`;
 
     // TODO: save file to storage
@@ -19,7 +22,7 @@ const createResizeImageJob = async (
     const thumbnailJob = {
       _id: uuid,
       filename,
-      originalFilename: '',
+      originalFilename: req.file.originalname,
       status: 'waiting',
       thumbnailFilename: ''
     };
