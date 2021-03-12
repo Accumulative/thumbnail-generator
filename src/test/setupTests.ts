@@ -1,28 +1,21 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 
 // This basically clears out the src/test/images_temp library and populates it with the default state (the src/test/images folder)
 
-global.beforeAll(() => {
-  fs.readdir('./src/test/images_temp', (err, fileNames) => {
-    if (err) throw err;
-    for (const name of fileNames) {
-      if (name != '.gitignore') {
-        fs.unlink(`./src/test/images_temp/${name}`, (err) => {
-          if (err) throw err;
-        });
-      }
+global.beforeAll(async (done) => {
+  const fileNamesTemp = await fs.readdir('./src/test/images_temp');
+  for (const name of fileNamesTemp) {
+    if (name != '.gitignore') {
+      await fs.unlink(`./src/test/images_temp/${name}`);
     }
-  });
-  fs.readdir('./src/test/images', (err, fileNames) => {
-    if (err) throw err;
-    for (const name of fileNames) {
-      fs.copyFile(
-        `./src/test/images/${name}`,
-        `./src/test/images_temp/${name}`,
-        (err) => {
-          if (err) throw err;
-        }
-      );
-    }
-  });
+  }
+  const fileNames = await fs.readdir('./src/test/images');
+  for (const name of fileNames) {
+    await fs.copyFile(
+      `./src/test/images/${name}`,
+      `./src/test/images_temp/${name}`
+    );
+  }
+  console.log('Folder setup complete');
+  done();
 });
