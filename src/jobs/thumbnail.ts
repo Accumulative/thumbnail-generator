@@ -16,6 +16,7 @@ const processingError = async (model: ThumbnailJobData, error: string) => {
 const resizeImage = async (job: ThumbnailJob): Promise<void> => {
   let resized: Buffer;
   let model: ThumbnailJobData;
+  
   try {
     model = job.attrs.data;
     console.log('Resize job is running for id: ', model._id);
@@ -32,14 +33,14 @@ const resizeImage = async (job: ThumbnailJob): Promise<void> => {
       return await processingError(model, 'Width and Height are not available');
     }
     // resize the image using fill (doesnt preserve aspect ratio)
-    resized = await image.resize(100, 100, { fit: sharp.fit.fill }).toBuffer();
+    resized = await image.resize(model.size, model.size, { fit: sharp.fit.fill }).toBuffer();
   } catch (error) {
     return await processingError(model, error);
   }
 
   // mark job as complete
   model.status = 'complete';
-  model.thumbnailFilename = `100px_${model.filename}`;
+  model.thumbnailFilename = `${model.size}px_${model.filename}`;
 
   // save the thumbnail so the user can retrieve it at a later date
   await putFile(model.thumbnailFilename, resized);
