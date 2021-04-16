@@ -30,17 +30,25 @@ const createResizeImageJob = async (
     const filename = `${uuid}.${extension}`;
     const fileResult = putFile(filename, req.file.buffer);
     if (fileResult) {
-      const thumbnailJob = {
+      const parentThumbnailJob = {
         _id: uuid,
+      }
+      const thumbnailJob = {
         filename,
         originalFilename: req.file.originalname,
         status: 'waiting',
-        thumbnailFilename: ''
+        parentId: parentThumbnailJob._id,
+        size: 0
       };
       // create a record in the database so the user can get updates
-      getDatabase().collection('thumbnailJob').insertOne(thumbnailJob);
+      getDatabase().collection('thumbnailJob').insertOne(parentThumbnailJob);
       // create a job for the worker to pickup, scheduled from now
-      await agenda.now(TASK_TYPES.RESIZE_IMAGE, thumbnailJob);
+      await Promise.all([100, 200, 300].map(async (size) => {
+        const thumbnailJobWithId = {...thumbnailJob, _id: uuidv4(), size }
+        await getDatabase().collection('thumbnailJob').insertOne(thumbnailJobWithId);
+        console.log(thumbnailJobWithId);
+        return await agenda.now(TASK_TYPES.RESIZE_IMAGE, thumbnailJobWithId);
+      }));
       // include job_id in response which can be used to retrieve the result thumbnail
       res.status(200).send({ data: { job_id: uuid } });
     } else {
@@ -57,17 +65,25 @@ const getResizeImageJob = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const job: ThumbnailJobData | null = await getDatabase()
+  const jobsConn: any = getDatabase()
     .collection('thumbnailJob')
-    .findOne({ _id: req.params.id });
-  if (job) {
-    const responseData: GetThumbnailJobResponse = { ...job, thumbnailLink: '' };
+    .find({ parentId: req.params.id });
 
-    // include a presigned url to the thumbnail if the resize job has completed
-    if (job.status === 'complete') {
-      responseData.thumbnailLink = await getFileLink(job.thumbnailFilename);
+  const jobs = []
+  while(await jobsConn.hasNext()) {
+    jobs.push(await jobsConn.next());
+  }
+
+  if (jobs.length) {
+    for(let i = 0; i < jobs.length; i++) {
+      // include a presigned url to the thumbnail if the resize job has completed
+      if(jobs[i].status === 'complete') {
+        jobs[i].thumbnailLink = await getFileLink(jobs[i].thumbnailFilename);
+      } else {
+        jobs[i].thumbnailLink = '';
+      }
     }
-    res.status(200).send({ data: responseData });
+    res.status(200).send({ data: jobs });
   } else {
     res.status(400).send({ error: 'Job not found' });
   }

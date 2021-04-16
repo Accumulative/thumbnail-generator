@@ -12,6 +12,7 @@ interface ThumbnailJobData {
   originalFilename: string;
   status: string;
   thumbnailFilename: string;
+  size: number;
 }
 
 interface GetThumbnailJobResponse extends ThumbnailJobData {
