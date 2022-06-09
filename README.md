@@ -93,3 +93,8 @@ Curl example:
 ```bash
 curl --location --request GET 'http://localhost:3000/thumbnail/c7b4319e-b8f6-4ab0-8fb7-5b51db5c0c36/image'
 ```
+
+## Notes for deployment
+
+- The application as a whole (all docker images) requires about 2Gb of memory, 2 full CPUs, and 20GB of disk space to run safely.
+
