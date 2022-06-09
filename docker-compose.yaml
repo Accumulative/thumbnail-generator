@@ -5,8 +5,6 @@ services:
     build: .
     ports:
       - "3000:3000"
-    volumes:
-      - ./src:/usr/src/app/src
     environment: 
       SERVER_TYPE: server
     env_file: local.env
@@ -16,8 +14,6 @@ services:
   task:
     image: thumbnail-task
     build: .
-    volumes:
-      - ./src:/usr/src/app/src
     environment: 
       SERVER_TYPE: worker
     env_file: local.env

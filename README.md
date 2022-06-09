@@ -1,12 +1,11 @@
-# Thumbnail generator
+# Cogent Labs - Thumbnail Generator API
 
-Name: Kieran Burke
-
-Description: Thumbnail-generator is a JSON-based REST API service which resizes images into 100x100px thumbnails.
+Thumbnail-generator is a JSON-based REST API service which resizes images into 100x100px thumbnails.
 
 ## Overview 
 
 ### Libraries
+
 - Minio - S3 compatible API, used with the minio docker image
 - Agenda - Background jobs/queue, used due to being lightweight and works with mongo
 - MongoDB - Choice for database as easy to use with node, and connects with Agenda
@@ -22,20 +21,25 @@ The API docker container will create jobs via agenda, which will create a record
 
 Both parts store files in the minio/s3 bucket which would be serverless in production and therefore highly scalable. It also means there's no reason to worry about complexity from disk operations.
 
-### Production
-
-This service could already theorectically be deployed to ECS, though it'd be better to opt for managed services for file storage and database hosting. That would leave us with two services, the task and api containers, to deploy to something like Elastic Beanstalk. It can be scaled up without any consequences.
-
-As for logging, it would be wise to integrate a logging and error reporting service such as CloudWatch, Sentry, Splunk, Zabbix etc. For now, failed jobs can be queried from the mongo database by looking for `status='failed'`, and there are console logs for most exceptions.
-
-## Running the server in docker
+## Running the service
 
 - API: runs at http://localhost:3000
 - Minio: runs at http://localhost:9000 (Credentials in `local.env`)
 
+### In docker
 ```properties
 docker-compose up -d
 ```
+
+### On your pc
+*This service requires NodeJS version 14.18.0+*
+
+```properties
+npm install
+npm run build
+npm start
+```
+
 ---
 ## Testing the service
 ### On your pc
@@ -44,17 +48,7 @@ Database and queue are mocked which means it doesnt have to run in docker
 npm install
 npm run test
 ```
-### In docker
-Database and queue are mocked which means it doesnt have to run in docker
-```properties
-docker-compose build api
-docker run --rm thumbnail-api npm run test
-```
-or
-```properties
-docker-compose up -d
-docker exec -it {api container id} npm run test
-```
+
 ### For development
 You can run `npm run test:watch` for an instant feedback loop
 
@@ -99,36 +93,3 @@ Curl example:
 ```bash
 curl --location --request GET 'http://localhost:3000/thumbnail/c7b4319e-b8f6-4ab0-8fb7-5b51db5c0c36/image'
 ```
-
-## Notes for future
-### Image upload
-- Does validation cover all cases? File size 20mb, jpg, jpeg and png allowed.
-- Consider base64 input vs file
-- Should there be validation on file size or pixel dimensions?
-
-### Storage
-- Should use AWS's official library instead of minio for better support and developer familiarity
-- Use S3 instead of a self hosted solution in production
-- UUID's are very unlikely to have duplicates, but be safe by adding a check before saving files.
-
-### Resizing
-- Investigate better cropping/stretching methods instead of using fill (which will not preserve aspect ratio)
-- Investigate best practices for handling streams vs buffers depending on use case
-
-### Fetching the result
-- Presigned URL's currently expire after 7 days (default). Tie to user authentication? Unlimited number of downloads? 
-- Connect to cloudfront as a CDN for better performance
-- Set up a proxy so that users dont have to set s3 vhost for minio presigned urls to work
-
-### Unit tests
-- Need to add end-to-end tests, which requires a synchronous mode or deeper mocking of queue library agenda
-- Need to add tests for more types/extensions of images, and also files that exceed the maximum size
-- Need to add tests to cover at the function level
-- Investigate a better solution for test files
-- Implement testing/handling for when S3/Database are not responding / down?
-
-### General ideas
-- It'd be trivial to allow the end-user to select the size of the thumbnail
-- Add support for gifs
-- Integrate a url shortener and public access for a compress-and-share service
-- Integrate with cloudfront for lowest latancy / included cache
