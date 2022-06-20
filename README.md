@@ -23,26 +23,19 @@ Both parts store files in the minio/s3 bucket which would be serverless in produ
 
 ## Running the service
 
-- API: runs at http://localhost:3000
-- Minio: runs at http://localhost:9000 (Credentials in `local.env`)
-
-### In docker
 ```properties
 docker-compose up -d
 ```
 
-### On your pc
-*This service requires NodeJS version 14.18.0+*
-
-```properties
-npm install
-npm run build
-npm start
-```
+- API: runs at http://localhost:3000
+- Minio: runs at http://localhost:9000 (Credentials in `local.env`)
 
 ---
 ## Testing the service
 ### On your pc
+
+*This service requires NodeJS version 14.18.0+*
+
 Database and queue are mocked which means it doesnt have to run in docker
 ```properties
 npm install
